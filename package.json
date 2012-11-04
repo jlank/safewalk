@@ -19,7 +19,8 @@
     "twilio-api": "~0.3.1",
     "cradle": "~0.6.4",
     "twilio": "~0.4.0",
-    "express": "~2.5.x",
+    "express": "3.0.1",
+    "jade": "*",
     "follow": "~0.8.0",
     "nano": "~3.3.3",
     "request": "~2.11.4"
