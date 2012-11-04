@@ -18,7 +18,7 @@ var acctSid = config.twilio.acctSid,
     authTok = config.twilio.authTok,
     twiHost = config.twilio.twiHost,
     fromNumber = config.contacts.fromNumber,
-    message = "hey can you safe-walk me home? http://bit.ly/VqIcgY";
+    message = "hey can you safe-walk me home? http://bit.ly/TDQEHy";
 
 
    var contacts = config.contacts.list;
