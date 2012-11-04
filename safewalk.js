@@ -3,12 +3,13 @@
  */
 var http = require('http');
 var config = require('./config');
+var Twiml = require('twilio').Twiml;
 var dbUrl = config.couchdb.host + ':' + config.couchdb.port;
 var nano = require('nano')(dbUrl);
 var follow = require('follow');
 var db = nano.db.use(config.couchdb.dbname);
 
-follow({ db: "https://jlank.iriscouch.com/safewalk", include_docs: true, since: 'now' }, function(error, change) {
+follow({ db: dbUrl, include_docs: true, since: 'now' }, function(error, change) {
   if(!error)
     console.log("Got change number " + change.seq + ": " + change.id);
 });
@@ -31,68 +32,26 @@ var acctSid = config.twilio.acctSid,
 var TwilioClient = require('twilio').Client,
     client = new TwilioClient(acctSid, authTok, twiHost);
 
-var phone = client.getPhoneNumber('+15005550006');
+var phone = client.getPhoneNumber('+15082194261');
 
-setInterval(phone.setup(doCall), 5000);
-
-var doCall = function() {
-
-    // Alright, our phone number is set up. Let's, say, make a call:
-    phone.makeCall('+15082729110', null, function(call) {
-
-        // 'call' is an OutgoingCall object. This object is an event emitter.
-        // It emits two events: 'answered' and 'ended'
-        call.on('answered', function(reqParams, res) {
-
-            // reqParams is the body of the request Twilio makes on call pickup.
-            // For instance, reqParams.CallSid, reqParams.CallStatus.
-            // See: http://www.twilio.com/docs/api/2010-04-01/twiml/twilio_request
-            // res is a Twiml.Response object. This object handles generating
-            // a compliant Twiml response.
-
-            console.log('Call answered');
-
-            // We'll append a single Say object to the response:
-            res.append(new Twiml.Say('Hello, there!'));
-
-            // And now we'll send it.
-            res.send();
-        });
-
-        call.on('ended', function(reqParams) {
-            console.log('Call ended');
+phone.setup(function() {
+/*
+    phone.makeCall('+13016418246', null, function(call) {
+        console.log('making call');
+        call.on('answered', function(callParams, response) {
+            response.append(new Twiml.Say('Hey Nathan!  I got the Twilio API working.  Rock On.  From John'));
+            response.send();
         });
     });
-
-    // But wait! What if our number receives an incoming SMS?
-    phone.on('incomingSms', function(reqParams, res) {
-
-        // As above, reqParams contains the Twilio request parameters.
-        // Res is a Twiml.Response object.
-
-        console.log('Received incoming SMS with text: ' + reqParams.Body);
-        console.log('From: ' + reqParams.From);
+*/
+    phone.on('incomingSms', function(reqParams, response) {
+      console.log(reqParams);
+      console.log('Received incoming SMS with text: ' + reqParams.Body);
+      console.log('From: ' + reqParams.From);
+      response.append(new Twiml.Sms('whats up!'));
+      response.send();
+      console.log('sent response');
     });
 
-    // Oh, and what if we get an incoming call?
-    phone.on('incomingCall', function(reqParams, res) {
 
-        res.append(new Twiml.Say('Thanks for calling! I think you are beautiful!'));
-        res.send();
-    });
-};
-
-
-// Port the web server will run on.
-var port = process.argv[2] || 8000;
-
-// Web server to listen for incoming HTTP POSTs from SMSified.
-var server = http.createServer(function(req, res) {
-  req.addListener('data', function(data) {
-        var inbound = new InboundMessage(JSON.parse(data));
-        saveDoc(inbound);
-  });
-  res.writeHead(200);
-  res.end();
-
-}).listen(port);
+});
