@@ -8,6 +8,8 @@ var dbUrl = config.couchdb.host + ':' + config.couchdb.port;
 var nano = require('nano')(dbUrl);
 var follow = require('follow');
 var db = nano.db.use(config.couchdb.dbname);
+var request = require('request');
+var spawn = require('child_process').spawn;
 
 follow({ db: dbUrl, include_docs: true, since: 'now' }, function(error, change) {
   if(!error)
@@ -32,7 +34,9 @@ var acctSid = config.twilio.acctSid,
 var TwilioClient = require('twilio').Client,
     client = new TwilioClient(acctSid, authTok, twiHost);
 
-var phone = client.getPhoneNumber('+15082194261');
+var fromNumber = '+15082194261';
+var toNumber = '+15082729110';
+var phone = client.getPhoneNumber(fromNumber);
 
 phone.setup(function() {
 /*
@@ -48,9 +52,26 @@ phone.setup(function() {
       console.log(reqParams);
       console.log('Received incoming SMS with text: ' + reqParams.Body);
       console.log('From: ' + reqParams.From);
-      response.append(new Twiml.Sms('whats up!'));
-      response.send();
-      console.log('sent response');
+
+
+      var message = "hey this is a message";
+      var sms = spawn('./sendSms.sh', [acctSid, fromNumber, toNumber, message, authTok]);
+
+      sms.stderr.setEncoding('utf8');
+      sms.stdout.setEncoding('utf8');
+      sms.stderr.on('data', function (data) {
+        console.error(data);
+      });
+
+      sms.stdout.on('data', function (data) {
+        console.log(data);
+      });
+
+      sms.on('exit', function (code, signal) {
+        if(code === 0) {
+          console.log('sent sms');
+        }
+      });
     });
 
 
