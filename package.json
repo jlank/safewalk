@@ -1,0 +1,27 @@
+{
+  "name": "safewalk",
+  "version": "0.0.1",
+  "description": "ERROR: No README.md file found!",
+  "main": "safewalk.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jlank/safewalk.git"
+  },
+  "keywords": [
+    "sms"
+  ],
+  "author": "John Lancaster",
+  "license": "BSD",
+  "dependencies": {
+    "twilio-api": "~0.3.1",
+    "cradle": "~0.6.4",
+    "twilio": "~0.4.0",
+    "express": "~2.5.x",
+    "follow": "~0.8.0",
+    "nano": "~3.3.3",
+    "request": "~2.11.4"
+  }
+}

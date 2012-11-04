@@ -1,0 +1,18 @@
+/**
+ * Enter your configuration details in this file.
+ */
+
+// Details of your CouchDB instance.
+exports.couchdb  = {
+  userid : '',
+  password : '',
+  host : '',
+  port : '5984',
+  dbname : 'safewalk'
+};
+
+exports.twilio = {
+  acctSid: 'ACccd81e00908e67270400e6d413fcf2f6',
+  authTok: 'e4d164f2cd5a10ad27883d0211bdefa0',
+  twiHost: 'localhost'
+};
